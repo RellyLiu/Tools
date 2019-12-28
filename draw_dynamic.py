@@ -1,8 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import mpl_toolkits.mplot3d
-import time
-import pdb
 
 pause = False
 
@@ -14,7 +11,6 @@ def onClick(event):
         pause = True
 
 def plot_vehicle(x, y, theta):
-    global pl1
     p1_i = np.array([0.5, 0, 1]).T
     p2_i = np.array([-0.5, 0.25, 1]).T
     p3_i = np.array([-0.5, -0.25, 1]).T
@@ -24,9 +20,9 @@ def plot_vehicle(x, y, theta):
     p2 = np.matmul(T, p2_i)
     p3 = np.matmul(T, p3_i)
 
-    pl1 = plt.plot([p1[0], p2[0]], [p1[1], p2[1]], 'k-')
-    pl1 = plt.plot([p2[0], p3[0]], [p2[1], p3[1]], 'k-')
-    pl1 = plt.plot([p3[0], p1[0]], [p3[1], p1[1]], 'k-')
+    plt.plot([p1[0], p2[0]], [p1[1], p2[1]], 'k-')
+    plt.plot([p2[0], p3[0]], [p2[1], p3[1]], 'k-')
+    plt.plot([p3[0], p1[0]], [p3[1], p1[1]], 'k-')
 
 def transformation_matrix(x, y, theta):
     return np.array([
@@ -35,12 +31,14 @@ def transformation_matrix(x, y, theta):
         [0, 0, 1]
     ])
 
-fig = plt.figure(1)
 f = open("/home/dahua/workspace/script/pose_data")
 x = []
 y = []
 a = []
+
+fig = plt.figure(1)
 fig.canvas.mpl_connect('button_press_event', onClick)
+ax = fig.add_subplot(1,1,1)
 
 count=0
 for line in f:
@@ -58,16 +56,11 @@ for line in f:
     x.append( float(data[0] ) )
     y.append( float(data[1] ) ) 
     a.append( float(data[2] ) )
-    x1 = float(data[0])
-    y1 = float(data[1])
-    a1 = float(data[2])
-    pl1.clf() 
     plot_vehicle(x[-1], y[-1], a[-1])
     plt.plot(x, y, 'b--')
-    ax = fig.add_subplot( 111)
-    ax.axis('equal')
+    plt.axis('equal')
     plt.draw()
-    plt.pause(0.000000001)
+    plt.pause(0.001)
 plt.show()
 
 
