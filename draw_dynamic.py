@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 pause = False
+x_scale = 100
 
 def onClick(event):
     global pause
@@ -11,9 +12,11 @@ def onClick(event):
         pause = True
 
 def plot_vehicle(x, y, theta):
-    p1_i = np.array([0.5, 0, 1]).T
-    p2_i = np.array([-0.5, 0.25, 1]).T
-    p3_i = np.array([-0.5, -0.25, 1]).T
+    global x_scale
+
+    p1_i = np.array([0.01 * x_scale, 0, 1]).T
+    p2_i = np.array([-0.01 * x_scale, 0.005 * x_scale, 1]).T
+    p3_i = np.array([-0.01 * x_scale, -0.005 * x_scale, 1]).T
 
     T = transformation_matrix(x, y, theta)
     p1 = np.matmul(T, p1_i)
@@ -40,12 +43,13 @@ fig = plt.figure(1)
 fig.canvas.mpl_connect('button_press_event', onClick)
 ax = fig.add_subplot(1,1,1)
 
-count=0
+count = 0
+cache = 0
 for line in f:
-  count = count + 1
-  if count < 20:
+  cache = cache + 1
+  if cache < 20:
      continue
-  count = 0
+  cache = 0
 
   if  pause: 
     plt.pause(1)
@@ -61,6 +65,17 @@ for line in f:
     plt.axis('equal')
     plt.draw()
     plt.pause(0.001)
+
+  if count > 20000:
+    x = []
+    y = []
+    a = []
+    plt.clf()
+    count = 0
+  count = count + 1
+
+  x_scale = plt.axis()[1] - plt.axis()[0]
+
 plt.show()
 
 
