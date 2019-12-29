@@ -1,8 +1,13 @@
+#!/usr/bin/python
+#coding=utf-8
+
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 
 pause = False
 x_scale = 100
+data_file = sys.argv[1]
 
 def onClick(event):
     global pause
@@ -28,13 +33,14 @@ def plot_vehicle(x, y, theta):
     plt.plot([p3[0], p1[0]], [p3[1], p1[1]], 'k-')
 
 def transformation_matrix(x, y, theta):
+
     return np.array([
         [np.cos(theta), -np.sin(theta), x],
         [np.sin(theta), np.cos(theta), y],
         [0, 0, 1]
     ])
 
-f = open("/home/dahua/workspace/script/pose_data")
+f = open(data_file)
 x = []
 y = []
 a = []
@@ -45,7 +51,9 @@ ax = fig.add_subplot(1,1,1)
 
 count = 0
 cache = 0
+
 for line in f:
+
   cache = cache + 1
   if cache < 20:
      continue
@@ -56,14 +64,16 @@ for line in f:
 
   if not pause:
     data = line.split()
-    plt.clf()
     x.append( float(data[0] ) )
     y.append( float(data[1] ) ) 
     a.append( float(data[2] ) )
+
+    plt.clf()
     plot_vehicle(x[-1], y[-1], a[-1])
     plt.plot(x, y, 'b--')
     plt.axis('equal')
     plt.draw()
+
     plt.pause(0.001)
 
   if count > 20000:
@@ -72,10 +82,8 @@ for line in f:
     a = []
     plt.clf()
     count = 0
-  count = count + 1
 
+  count = count + 1
   x_scale = plt.axis()[1] - plt.axis()[0]
 
 plt.show()
-
-
